@@ -1,3 +1,7 @@
+"""
+Script containing utilities related to manual data cleaning, processing, and transformation.
+"""
+
 from pandas import read_csv, get_dummies, to_numeric
 from pandas.api.types import is_numeric_dtype
 import numpy as np
@@ -5,7 +9,15 @@ from scipy import stats
 
 
 def unknown_to_nan(df, additional_regex_patterns=[], additional_strings=[]):
-    """Function to convert typical unknown & unspecified values in a data frame to NaN values"""
+    """
+    Function to convert typical unknown & unspecified values in a data frame to NaN values
+
+    @param (pd.DataFrame) df: data frame with unknown values represented in various forms
+    @param (list) additional_regex_patterns: regex patterns, alongside 'default_regex_patterns',
+           that may be contained in unknown values in @df
+    @param (list) additional_strings: strings, alongside 'default_strings', that may represent an
+           unknown value in @df
+    """
     default_regex_patterns = [r'^\s*$']  # blank character
     default_strings = ['n/a', 'N/A', 'NA', 'UNKNOWN', '-UNKNOWN-', '-unknown-', 'unknown']
     # Replace UNKNOWN tokens with proper missing value annotations
@@ -21,7 +33,7 @@ def categorical_to_onehot_columns(df, target_column=None):
     Function to encode categorical columns (features) into one-hot encoded columns.
 
     @param (pd.DataFrame) df: data frame with categorical variables as columns
-    @param (str) target_column: column name for the dependent target variable in @df
+    @param (str) target_column: column name for the dependent target variable in @df (default: None)
     """
     for column in df.columns.values:
         if not is_numeric_dtype(df[column]) and not column == target_column:
@@ -39,7 +51,7 @@ def groupby_and_gather(raw_df):
     Function to groupby by age-gender buckets and gather the population per country, included as
     a problem-specific example rather than a generalized utility.
 
-    @param (pd.DataFarme) df: data frame with age-gender buckets and corresponding information,
+    @param (pd.DataFrame) raw_df: data frame with age-gender buckets and corresponding information
     """
     raw_df['bucket_id'] = raw_df['age_bucket'].str.replace('+', '-200') + raw_df['gender']
     raw_df.drop(['year', 'age_bucket', 'gender'], axis=1, inplace=True)
@@ -70,6 +82,7 @@ range_to_string_mapping = {tuple([i for i in range(int(rep.split('-')[0]),
 
 
 def age_to_age_bucket(age):
+    """Function to convert a given integer age value to the corresponding age bucket"""
     for bucket in range_to_string_mapping.keys():
         if int(age) in tuple(bucket):
             return range_to_string_mapping[bucket]
@@ -85,7 +98,7 @@ def mcar_test(df, significance_level=0.05):
     bias) only when the data is missing at random (MAR), which MCAR is a subset of.
 
     @param (pd.DataFrame) df: data frame with missing values that are ideally all quantitative
-    @param (float) significance_level: alpha parameter of the chi-squared test
+    @param (float) significance_level: alpha parameter of the chi-squared test (default: 0.05)
     """
     test_df = df.copy()
     # Check if data contains categorical variables and select only numerical (float) columns

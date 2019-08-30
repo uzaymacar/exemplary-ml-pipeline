@@ -1,3 +1,7 @@
+"""
+Class file containing KNNImputer() for data imputation.
+"""
+
 import random
 import numpy as np
 from pandas.api.types import is_numeric_dtype
@@ -6,11 +10,25 @@ from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
 
 
 class KNNImputer(object):
+    """
+    Class representing a data imputation method with K-Nearest Neighbours algorithm.
+
+    @param (int) k: number of nearest neighbours to distinguish examples (default: 3)
+    """
     def __init__(self, k=3):
         self.k = k
         self.impute_variables, self.ignore_features, self.features, self.models = None, None, {}, []
 
     def preprocess(self, df, target_column, get_null=True):
+        """
+        Function to preprocess data frame before fitting a KNN
+
+        @param (pd.DataFrame) df: dataframe to apply KNN on for filling missing values
+        @param (str) target_column: name of the column that is currently being imputed, using
+               all the other available columns
+        @param (bool) get_null: whether to get rows where the target column contains an empty
+               value (prediction data) or not (training data) (default: True)
+        """
         # Non-empty target variable -> training data, Empty target variable -> prediction data
         data = df[df[target_column].isnull()] if get_null else df[df[target_column].notnull()]
         # Remove ignored features
@@ -25,6 +43,15 @@ class KNNImputer(object):
         return data
 
     def fit(self, df, impute_variables='all', ignore_features=None):
+        """
+        Function to fit KNN algorithm.
+
+        @param (pd.DataFrame) df: dataframe to apply KNN on for filling missing values
+        @param (list/str) impute_variables: dependent variables, based on column names, to impute
+               for; or you can specify 'all' to impute for all columns (default: 'all')
+        @param (list) ignore_features: independent variables, based on column names, that will not
+               be utilized when imputing for dependent variables (default: None)
+        """
         if impute_variables == 'all':
             self.impute_variables = df.columns.values.tolist()
         else:
@@ -54,6 +81,7 @@ class KNNImputer(object):
             self.models[i].fit(X=train_features, y=train_labels)
 
     def impute(self, df):
+        """Function to impute missing values in data frame via the pretrained KNN model."""
         for i, column in enumerate(self.impute_variables):
             # Check if the target variable really contains empty values
             if not df[column].isnull().values.any():
