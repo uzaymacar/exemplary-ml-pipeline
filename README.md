@@ -1,7 +1,9 @@
 # Exemplary Machine Learning Pipeline
 
 ## Introduction
-This repository aims to act as an exemplary data science & machine learning pipeline to any tabular data problem. Moreover, the notebooks aim to explore two Python packages for machine learning *automation*: `featuretools` and `h2o`. Whereas `featuretools` specializes in *feature engineering*, `h2o`specializes in *modelling*. On a broader sense, here is what we cover:
+This repository aims to act as an exemplary data science & machine learning pipeline to any tabular data problem. Moreover, the notebooks aim to explore two Python packages for machine learning *automation*: `featuretools` and `h2o`. Whereas `featuretools` specializes in *feature engineering*, `h2o`specializes in *modelling*. 
+
+Follow the notebooks in the order indicated. On a broader sense, here is what we cover:
 * Data Insights & Visualizations
 * Data Cleaning
 * Data Imputation
